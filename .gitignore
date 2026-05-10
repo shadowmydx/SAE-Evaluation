@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# IDE & editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Claude
+.claude/
+
+# Logs
+*.log
+
+# Datasets / model weights / large binaries
+*.bin
+*.pt
+*.pth
+*.safetensors
+*.gguf
+*.onnx
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Excluded from discover_features.py
+discovered_features.json
+ranked_features.json
+
+# Test artifacts
+__pycache__
