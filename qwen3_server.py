@@ -484,7 +484,7 @@ async def sae_intervene(req: SAEInterventionRequest):
             if layer_idx < 0 or layer_idx >= model.config.num_hidden_layers:
                 raise HTTPException(400, f"Layer {layer_idx} out of range [0, {model.config.num_hidden_layers-1}]")
             sae_state = _load_sae(layer_idx)
-            hook_fn = _make_intervention_hook(specs, {layer_idx: sae_state})
+            hook_fn = _make_intervention_hook(specs, sae_state)
             handle = model.model.layers[layer_idx].register_forward_hook(hook_fn)
             hooks.append(handle)
 

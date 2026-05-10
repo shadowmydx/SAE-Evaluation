@@ -197,8 +197,8 @@ def main():
     # 排序取 top-K
     ranked = {
         "info": {
-            "prompt_a": "France (C1: France-unique features)",
-            "prompt_b": "China (C2: China-unique features)",
+            "prompt_a": "The capital of France is",
+            "prompt_b": "The capital of China is",
             "layers": layers,
             "topk": args.topk,
             "num_prompts": args.num_prompts,
