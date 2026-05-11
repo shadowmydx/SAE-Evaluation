@@ -3,6 +3,7 @@ Pure business logic for the 3-step experiment pipeline.
 Each function takes typed data and returns typed data — no HTTP, no argparse, no print.
 """
 
+import json
 from collections import defaultdict
 from .models import (
     ExperimentConfig,
@@ -169,3 +170,102 @@ def prepare_inject_interventions(
             Intervention(layer=layer, feature_id=f.feature_id, action="set", value=val)
         )
     return interventions
+
+
+# ── Overlap analysis ────────────────────────────────────────────────────────
+
+def collect_feature_union(
+    prompts: list[str],
+    layers: list[int],
+    max_prompts: int = 30,
+    label: str = "",
+) -> dict[int, set[int]]:
+    """
+    Scan prompts and collect the union of all top-100 feature IDs per layer.
+
+    Returns {layer: {fid, ...}}.
+    """
+    result: dict[int, set[int]] = {l: set() for l in layers}
+    n = min(max_prompts, len(prompts))
+    for i, prompt in enumerate(prompts[:max_prompts]):
+        if label:
+            print(f"  [{i+1}/{n}] scanning {label}...", end="\r")
+            import sys as _sys
+            _sys.stdout.flush()
+        try:
+            data = sae_scan(prompt, layers)
+        except Exception as e:
+            print(f"\n  Error on prompt {i}: {e}")
+            continue
+        for ls, entry in data["layers"].items():
+            layer = int(ls)
+            if layer not in layers:
+                continue
+            for feat in entry["top_features"]:
+                result[layer].add(feat["feature_id"])
+    if label:
+        print()
+    return result
+
+
+def compute_multi_overlap(
+    target_prompts: list[str],
+    layers: list[int],
+    named_sets: dict[str, dict[int, set[int]]],
+    prompt_type_label: str = "",
+    output_file: str = "",
+) -> dict[int, dict]:
+    """
+    Scan target prompts and compute overlap with multiple named feature sets.
+
+    named_sets: {"set_name": {layer: {fid, ...}}, ...}
+
+    Returns {layer: {set_name: [overlap_counts_per_prompt], "set_sizes": {set_name: size}}}
+    """
+    # Pre-compute set sizes per layer
+    set_sizes: dict[int, dict[str, int]] = {}
+    for layer in layers:
+        set_sizes[layer] = {}
+        for set_name, fset in named_sets.items():
+            set_sizes[layer][set_name] = len(fset.get(layer, set()))
+
+    # Overlap accumulators per layer per set
+    overlaps: dict[int, dict[str, list[int]]] = {}
+    for layer in layers:
+        overlaps[layer] = {sn: [] for sn in named_sets}
+
+    n = len(target_prompts)
+    for i, prompt in enumerate(target_prompts):
+        if prompt_type_label:
+            print(f"  [{i+1}/{n}] scanning {prompt_type_label}...", end="\r")
+            import sys as _sys
+            _sys.stdout.flush()
+        try:
+            data = sae_scan(prompt, layers)
+        except Exception as e:
+            print(f"\n  Error: {e}")
+            continue
+        for ls, entry in data["layers"].items():
+            layer = int(ls)
+            if layer not in layers:
+                continue
+            active_fids = {feat["feature_id"] for feat in entry["top_features"]}
+            for set_name, fset in named_sets.items():
+                cnt = len(active_fids & fset.get(layer, set()))
+                overlaps[layer][set_name].append(cnt)
+    if prompt_type_label:
+        print()
+
+    # Build output
+    result = {}
+    for layer in layers:
+        result[layer] = {"set_sizes": set_sizes[layer], "per_prompt": {}}
+        for set_name in named_sets:
+            result[layer]["per_prompt"][set_name] = overlaps[layer][set_name]
+
+    if output_file:
+        with open(output_file, "w") as f:
+            json.dump(result, f, indent=2)
+        print(f"Overlap details saved to {output_file}")
+
+    return result

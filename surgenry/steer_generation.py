@@ -29,6 +29,41 @@ def cmd_baseline(args):
     print(text)
 
 
+def cmd_steer_shared(args):
+    """Negate shared (A∩B) features from discovered_features.json — no ranking needed."""
+    import json
+    with open(args.input) as f:
+        discovered = json.load(f)
+
+    ls = str(args.layer)
+    if ls not in discovered:
+        print(f"Layer {args.layer} not found in {args.input}")
+        sys.exit(1)
+
+    shared_ids = discovered[ls].get("shared", [])
+    if not shared_ids:
+        print(f"No shared features found for layer {args.layer}")
+        sys.exit(1)
+
+    features = shared_ids[:args.top]
+    interventions = [
+        {"layer": args.layer, "feature_id": fid, "action": "negate", "value": 0.0}
+        for fid in features
+    ]
+
+    print(f"Steer-negate-shared: negating shared (A∩B) features in layer {args.layer}")
+    print(f"  Feature IDs: {features}")
+    print()
+
+    if args.stream:
+        for token in intervene_stream(args.prompt, interventions, args.max_tokens, args.temperature):
+            print(token, end="", flush=True)
+        print()
+    else:
+        text = intervene(args.prompt, interventions, args.max_tokens, args.temperature)
+        print(text)
+
+
 def cmd_steer(args):
     ranked = RankedFeatures.load(args.input)
     side = args.side  # "a" or "b"
@@ -157,13 +192,20 @@ def main():
     parser = argparse.ArgumentParser(description="SAE 特征 steer 干预验证")
     sub = parser.add_subparsers(dest="command", required=True)
 
-    for name, desc in [("baseline", "无干预基线输出"), ("steer-negate", "反方向 steer"),
+    for name, desc in [("baseline", "无干预基线输出"), ("steer-negate", "反方向 steer (from ranked JSON)"),
+                        ("steer-negate-shared", "negate shared (A∩B) from discovered JSON"),
                         ("inject", "注入目标特征激活"), ("compare", "一键对比")]:
         p = sub.add_parser(name, help=desc)
         p.add_argument("--prompt", type=str, default="The capital of France is")
         p.add_argument("-m", "--max-tokens", type=int, default=256, dest="max_tokens")
         p.add_argument("-t", "--temperature", type=float, default=0.3)
         if name == "baseline":
+            continue
+        if name == "steer-negate-shared":
+            p.add_argument("-i", "--input", type=str, default="discovered_features.json")
+            p.add_argument("-l", "--layer", type=int, default=28)
+            p.add_argument("--top", type=int, default=3)
+            p.add_argument("-s", "--stream", action="store_true")
             continue
         p.add_argument("-i", "--input", type=str, default="ranked_features.json")
         p.add_argument("-l", "--layer", type=int, default=28)
@@ -178,6 +220,7 @@ def main():
     dispatch = {
         "baseline": cmd_baseline,
         "steer-negate": cmd_steer,
+        "steer-negate-shared": cmd_steer_shared,
         "inject": cmd_inject,
         "compare": cmd_compare,
     }

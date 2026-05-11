@@ -37,15 +37,26 @@ surgenry/                — SAE interpretability experiments
 ├── core/                — Reusable library (data+function decoupled)
 │   ├── models.py        — Typed dataclasses (ExperimentConfig, RankedFeatures, etc.)
 │   ├── client.py        — Server interaction layer (sae_scan, generate, intervene)
-│   └── workflows.py     — Business logic (discover, rank, intervention assembly)
-├── data/prompts/        — External prompt lists (JSON arrays)
-│   ├── france.json
-│   └── china.json
-├── discover_features.py — Step 1: find features specific to prompt A vs B
-├── rank_features.py     — Step 2: rank candidate features by frequency across 50 prompts
-├── steer_generation.py  — Step 3: intervene (negate/inject) to steer generation
-├── sae_analysis.py      — Quick SAE feature viewer for a single prompt
-└── sae_intervene.py     — Quick single-feature intervention tool
+│   └── workflows.py     — Business logic (discover, rank, overlap, intervention assembly)
+├── data/prompts/        — External prompt lists (JSON arrays, gitignored)
+│   ├── france.json      — 50 France-related prompts
+│   ├── china.json       — 50 China-related prompts
+│   ├── code.json                 — 30 code generation prompts (A)
+│   ├── knowledge.json            — 30 knowledge recall prompts (B)
+│   ├── descriptions.json         — 15 concept descriptions (D, control set)
+│   ├── reasoning_code.json       — 15 code-related reasoning prompts (C, easy)
+│   ├── reasoning_pure.json       — 15 pure reasoning prompts (C', easy)
+│   ├── hard_reasoning_code.json  — 46 random-param code-related reasoning (hard)
+│   ├── hard_reasoning_pure.json  — 24 random-param pure reasoning (hard)
+│   ├── procedural.json           — 11 non-code procedural tasks (E, baking/assembly/etc.)
+│   └── generate_hard_prompts.py  — Generator for hard reasoning prompts
+├── discover_features.py         — Step 1: find features specific to prompt A vs B
+├── rank_features.py             — Step 2: rank candidate features by frequency
+├── rank_shared.py               — Rank A∩D (concept-shared) features by cross-group frequency
+├── steer_generation.py          — Step 3: intervene (negate/inject) to steer
+├── sae_analysis.py              — Quick SAE feature viewer for a single prompt
+├── sae_intervene.py             — Quick single-feature intervention tool
+└── verify_reasoning_overlap.py  — Reasoning overlap experiment (uses A-D, A∩D)
 ```
 
 ## Key Paths
@@ -98,6 +109,45 @@ python3 surgenry/steer_generation.py steer-negate \
   -i ranked_myexp.json -l 31 --side a --top 3 --prompt "..."
 python3 surgenry/steer_generation.py inject \
   -i ranked_myexp.json -l 31 --side b --top 3 --prompt "..."
+```
+
+## Reasoning Overlap Experiment (Code vs Knowledge) — 修正版
+
+验证假说：排除概念共享干扰后，代码拆解特征是否仍在推理中激活。
+
+实验结论：**"代码拆解为推理提供 token 桥梁"假说被否决。** 具体证据见 `实验报告_推理重叠验证.md`。
+
+### 一键运行（相关性分析）
+
+```bash
+python3 surgenry/verify_reasoning_overlap.py
+python3 surgenry/verify_reasoning_overlap.py --layers 15,24,31 -n 30 -o overlap_report.json
+```
+
+### 因果干预验证
+
+```bash
+# A-D: 代码独有特征 → 预期: 无影响（假设被否决）
+python3 surgenry/discover_features.py \
+  --prompt-a "Write a function to compute the nth Fibonacci number" \
+  --prompt-b "The Fibonacci sequence is a series where each number is the sum of the two preceding ones" \
+  -l 31 --output discovered_code_vs_desc.json
+
+python3 surgenry/rank_features.py \
+  --input discovered_code_vs_desc.json \
+  --name code_vs_desc --group-a "code-specific" --group-b "description-specific" \
+  --prompts-a surgenry/data/prompts/code.json \
+  --prompts-b surgenry/data/prompts/descriptions.json \
+  --num-prompts 30 --topk 10 --output ranked_code_vs_desc.json
+
+python3 surgenry/steer_generation.py steer-negate \
+  -i ranked_code_vs_desc.json -l 31 --side a --top 87 \
+  --prompt "..." -m 100 -t 0.3
+
+# A∩D: 通用语言特征 → 预期: 全面崩溃（控制组）
+python3 surgenry/rank_shared.py -l 31 --topk 10 --output ranked_shared.json
+python3 surgenry/steer_generation.py steer-negate-shared \
+  -i ranked_shared.json -l 31 --top 10 --prompt "..." -m 100 -t 0.3
 ```
 
 ## Surgenry Experiment Flow (France vs China)
