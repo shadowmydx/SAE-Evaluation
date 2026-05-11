@@ -155,6 +155,78 @@ intervene 特有参数:
   -s, --stream          启用 SSE 流式输出
 ```
 
+## 实验框架 (surgenry/)
+
+`surgenry/` 目录提供了基于 SAE 的三步对比实验框架，数据与功能已解耦，可复用于任意两组 prompt 的对比分析。
+
+### 架构
+
+```
+surgenry/
+├── core/                       # 可复用核心库
+│   ├── __init__.py
+│   ├── models.py               # 数据类: ExperimentConfig, RankedFeatures 等
+│   ├── client.py               # 服务交互层: sae_scan, generate, intervene (含 SSE 解析)
+│   └── workflows.py            # 纯业务逻辑: discover_differential, rank_by_frequency 等
+├── data/
+│   └── prompts/
+│       ├── france.json         # 50 个 France 相关 prompt
+│       └── china.json          # 50 个 China 相关 prompt
+├── discover_features.py        # Step 1: 差异特征发现 (薄 CLI 壳)
+├── rank_features.py            # Step 2: 跨 prompt 频率排序 (薄 CLI 壳)
+├── steer_generation.py         # Step 3: SAE 特征干预验证 (薄 CLI 壳)
+├── sae_analysis.py             # 单 prompt SAE 分析 (薄 CLI 壳)
+└── sae_intervene.py            # 单特征干预实验 (薄 CLI 壳)
+```
+
+### 定义新实验
+
+创建一个实验只需写 prompt 数据文件 + 传入 CLI 参数，无需修改代码：
+
+```bash
+# 1. 准备 prompt 数据
+cat surgenry/data/prompts/biology.json
+# ["DNA is made of", "Mitochondria are the", "Photosynthesis converts", ...]
+
+cat surgenry/data/prompts/physics.json
+# ["Newton's first law states", "E=mc^2 describes", "Quantum mechanics studies", ...]
+
+# 2. 运行三步流程
+python3 surgenry/discover_features.py \
+  --prompt-a "The basic unit of life is" \
+  --prompt-b "The speed of light is" \
+  -l 24,28,31 --output discovered_bio_vs_physics.json
+
+python3 surgenry/rank_features.py \
+  --input discovered_bio_vs_physics.json \
+  --name bio_vs_physics \
+  --group-a biology --group-b physics \
+  --prompt-a "The basic unit of life is" --prompt-b "The speed of light is" \
+  --prompts-a surgenry/data/prompts/biology.json \
+  --prompts-b surgenry/data/prompts/physics.json \
+  --topk 10 --output ranked_bio_vs_physics.json
+
+python3 surgenry/steer_generation.py baseline --prompt "DNA replication occurs"
+python3 surgenry/steer_generation.py steer-negate \
+  -i ranked_bio_vs_physics.json -l 31 --side a --top 3 \
+  --prompt "DNA replication occurs"
+```
+
+### 三步实验流程
+
+```bash
+# Step 1: 发现差异特征
+python3 surgenry/discover_features.py
+
+# Step 2: 按跨 prompt 频率排序 (50 prompts each side, ~300 SAE calls)
+python3 surgenry/rank_features.py
+
+# Step 3: 干预验证
+python3 surgenry/steer_generation.py baseline --prompt "The capital of France is"
+python3 surgenry/steer_generation.py steer-negate --prompt "..." -i ranked_features.json -l 31 --side a --top 3
+python3 surgenry/steer_generation.py inject --prompt "..." -i ranked_features.json -l 31 --side b --top 3
+```
+
 ## SAE 规格 (Qwen-Scope Qwen3-8B)
 
 | 属性 | 值 |

@@ -37,6 +37,9 @@ env/
 .DS_Store
 Thumbs.db
 
+# Prompt data files (bring your own prompts for experiments)
+surgenry/data/prompts/*.json
+
 # Excluded from discover_features.py
 discovered_features.json
 ranked_features.json

@@ -34,6 +34,13 @@ test_qwen3.py            — Integration test (starts server, runs all endpoints
 qwen3_demo.py            — Standalone demo (loads model directly, no server needed)
 
 surgenry/                — SAE interpretability experiments
+├── core/                — Reusable library (data+function decoupled)
+│   ├── models.py        — Typed dataclasses (ExperimentConfig, RankedFeatures, etc.)
+│   ├── client.py        — Server interaction layer (sae_scan, generate, intervene)
+│   └── workflows.py     — Business logic (discover, rank, intervention assembly)
+├── data/prompts/        — External prompt lists (JSON arrays)
+│   ├── france.json
+│   └── china.json
 ├── discover_features.py — Step 1: find features specific to prompt A vs B
 ├── rank_features.py     — Step 2: rank candidate features by frequency across 50 prompts
 ├── steer_generation.py  — Step 3: intervene (negate/inject) to steer generation
@@ -68,7 +75,32 @@ surgenry/                — SAE interpretability experiments
 - **Layer 31** (last hidden layer) is the most effective intervention target
 - **SAE weights are lazy-loaded** into `sae_cache` dict on first use
 
-## Surgenry Experiment Flow
+## Running New Experiments
+
+To run a custom experiment (not France vs China), provide prompt data files and use CLI args:
+
+```bash
+# Step 1: Discover differential features
+python3 surgenry/discover_features.py \
+  --prompt-a "prompt for group A" --prompt-b "prompt for group B" \
+  -l 24,28,31 --output discovered_myexp.json
+
+# Step 2: Rank by frequency
+python3 surgenry/rank_features.py \
+  --input discovered_myexp.json \
+  --name my_experiment --group-a "label_a" --group-b "label_b" \
+  --prompts-a surgenry/data/prompts/group_a.json \
+  --prompts-b surgenry/data/prompts/group_b.json \
+  --topk 10 --output ranked_myexp.json
+
+# Step 3: Steer interventions
+python3 surgenry/steer_generation.py steer-negate \
+  -i ranked_myexp.json -l 31 --side a --top 3 --prompt "..."
+python3 surgenry/steer_generation.py inject \
+  -i ranked_myexp.json -l 31 --side b --top 3 --prompt "..."
+```
+
+## Surgenry Experiment Flow (France vs China)
 
 ```bash
 # Step 1: Discover differential features
@@ -79,8 +111,9 @@ python3 surgenry/rank_features.py
 
 # Step 3: Steer interventions
 python3 surgenry/steer_generation.py baseline --prompt "The capital of France is"
-python3 surgenry/steer_generation.py steer-negate --prompt "..." -i ranked_features.json -l 31 --top 3
-python3 surgenry/steer_generation.py inject --prompt "..." -i ranked_features.json -l 31 --top 3
+python3 surgenry/steer_generation.py steer-negate --prompt "..." -i ranked_features.json -l 31 --side a --top 3
+python3 surgenry/steer_generation.py inject --prompt "..." -i ranked_features.json -l 31 --side b --top 3
+python3 surgenry/steer_generation.py compare --prompt "..." -i ranked_features.json
 ```
 
 ## Running Tests
