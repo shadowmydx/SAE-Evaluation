@@ -340,41 +340,81 @@ def _intervene_sae(
 ) -> tuple[torch.Tensor, dict]:
     """
     Apply SAE interventions on one residual vector.
-    Returns (modified_residual, {fid: {"original": ..., "new": ..., "action": ...}, ...}).
+
+    Supports two families of actions:
+      - Old-style (zero/negate/scale/set/clamp_max): modify SAE acts, then decode.
+      - add_direction: encode to check activation, then directly add/subtract
+        the W_dec direction vector in residual space (no decode loss).
+
+    Returns (modified_residual, {fid: ..., ...}).
     """
     W_enc = sae_state["W_enc"]
     b_enc = sae_state["b_enc"]
     W_dec = sae_state["W_dec"]
     b_dec = sae_state["b_dec"]
 
+    # Encode — always needed to check which features are active
     pre_acts = residual @ W_enc.T + b_enc
     topk_vals, topk_idx = torch.topk(pre_acts, k=100, dim=-1)
     acts = torch.zeros_like(pre_acts)
     acts.scatter_(-1, topk_idx, topk_vals)
 
+    # Build a set of active feature IDs for fast membership check
+    active_set = set(topk_idx.tolist())
+
     log = {}
+    direction_delta = None  # accumulator for add_direction modifications
+
     for spec in specs:
         fid = spec["feature_id"]
         orig = acts[fid].item()
         val = spec["value"]
 
-        if spec["action"] == "zero":
+        if spec["action"] == "add_direction":
+            # Only intervene if this feature is actually active
+            if fid in active_set:
+                if direction_delta is None:
+                    direction_delta = torch.zeros_like(residual)
+                acts[fid] = 0.0                      # zero SAE contribution to avoid double-count
+                direction_delta += val * W_dec[:, fid]  # α * direction in residual space (W_dec: 4096×65536)
+                log[str(fid)] = {"original": round(orig, 4), "new": 0.0,
+                                 "action": "add_direction", "alpha": val}
+            else:
+                log[str(fid)] = {"original": 0.0, "new": 0.0,
+                                 "action": "add_direction_skipped", "reason": "not_in_topk"}
+        elif spec["action"] == "zero":
             acts[fid] = 0.0
+            log[str(fid)] = {"original": round(orig, 4), "new": 0.0,
+                             "action": "zero", "value": 0.0}
         elif spec["action"] == "negate":
             acts[fid] = -acts[fid]
+            log[str(fid)] = {"original": round(orig, 4), "new": round(acts[fid].item(), 4),
+                             "action": "negate", "value": 0.0}
         elif spec["action"] == "scale":
             acts[fid] = acts[fid] * val
+            log[str(fid)] = {"original": round(orig, 4), "new": round(acts[fid].item(), 4),
+                             "action": "scale", "value": val}
         elif spec["action"] == "set":
             acts[fid] = val
+            log[str(fid)] = {"original": round(orig, 4), "new": val,
+                             "action": "set", "value": val}
         elif spec["action"] == "clamp_max":
             acts[fid] = min(acts[fid].item(), val)
+            log[str(fid)] = {"original": round(orig, 4), "new": round(acts[fid].item(), 4),
+                             "action": "clamp_max", "value": val}
         else:
             raise HTTPException(400, f"Unknown action: {spec['action']}")
 
-        log[str(fid)] = {"original": round(orig, 4), "new": round(acts[fid].item(), 4), "action": spec["action"], "value": val}
-
+    # Decode — may be skip-able if only add_direction actions were applied
+    # and none of those features were active (direction_delta is None).
+    # But the safe path is to always decode to handle mixed specs correctly.
     reconstructed = acts @ W_dec.T + b_dec
-    return reconstructed, log
+    if direction_delta is not None:
+        result = reconstructed + direction_delta
+    else:
+        result = reconstructed
+
+    return result, log
 
 
 def _make_intervention_hook(interventions: dict[int, list[dict]], sae_states: dict[int, dict]):

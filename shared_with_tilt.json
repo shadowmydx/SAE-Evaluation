@@ -1,0 +1,1611 @@
+{
+  "31": {
+    "stats": {
+      "a_union_size": 1224,
+      "d_union_size": 991,
+      "intersection_size": 315
+    },
+    "features": [
+      {
+        "feature_id": 34612,
+        "code_count": 28,
+        "desc_count": 1,
+        "code_freq": 0.933,
+        "desc_freq": 0.067,
+        "tilt": 9.656
+      },
+      {
+        "feature_id": 46757,
+        "code_count": 22,
+        "desc_count": 1,
+        "code_freq": 0.733,
+        "desc_freq": 0.067,
+        "tilt": 7.623
+      },
+      {
+        "feature_id": 25611,
+        "code_count": 21,
+        "desc_count": 1,
+        "code_freq": 0.7,
+        "desc_freq": 0.067,
+        "tilt": 7.284
+      },
+      {
+        "feature_id": 35529,
+        "code_count": 20,
+        "desc_count": 1,
+        "code_freq": 0.667,
+        "desc_freq": 0.067,
+        "tilt": 6.945
+      },
+      {
+        "feature_id": 15627,
+        "code_count": 30,
+        "desc_count": 2,
+        "code_freq": 1.0,
+        "desc_freq": 0.133,
+        "tilt": 6.2
+      },
+      {
+        "feature_id": 25861,
+        "code_count": 16,
+        "desc_count": 1,
+        "code_freq": 0.533,
+        "desc_freq": 0.067,
+        "tilt": 5.59
+      },
+      {
+        "feature_id": 31044,
+        "code_count": 14,
+        "desc_count": 1,
+        "code_freq": 0.467,
+        "desc_freq": 0.067,
+        "tilt": 4.913
+      },
+      {
+        "feature_id": 63103,
+        "code_count": 14,
+        "desc_count": 1,
+        "code_freq": 0.467,
+        "desc_freq": 0.067,
+        "tilt": 4.913
+      },
+      {
+        "feature_id": 61931,
+        "code_count": 28,
+        "desc_count": 3,
+        "code_freq": 0.933,
+        "desc_freq": 0.2,
+        "tilt": 4.138
+      },
+      {
+        "feature_id": 18556,
+        "code_count": 11,
+        "desc_count": 1,
+        "code_freq": 0.367,
+        "desc_freq": 0.067,
+        "tilt": 3.896
+      },
+      {
+        "feature_id": 30055,
+        "code_count": 22,
+        "desc_count": 3,
+        "code_freq": 0.733,
+        "desc_freq": 0.2,
+        "tilt": 3.267
+      },
+      {
+        "feature_id": 65306,
+        "code_count": 9,
+        "desc_count": 1,
+        "code_freq": 0.3,
+        "desc_freq": 0.067,
+        "tilt": 3.219
+      },
+      {
+        "feature_id": 4533,
+        "code_count": 15,
+        "desc_count": 2,
+        "code_freq": 0.5,
+        "desc_freq": 0.133,
+        "tilt": 3.151
+      },
+      {
+        "feature_id": 20542,
+        "code_count": 21,
+        "desc_count": 3,
+        "code_freq": 0.7,
+        "desc_freq": 0.2,
+        "tilt": 3.122
+      },
+      {
+        "feature_id": 37631,
+        "code_count": 8,
+        "desc_count": 1,
+        "code_freq": 0.267,
+        "desc_freq": 0.067,
+        "tilt": 2.88
+      },
+      {
+        "feature_id": 23680,
+        "code_count": 8,
+        "desc_count": 1,
+        "code_freq": 0.267,
+        "desc_freq": 0.067,
+        "tilt": 2.88
+      },
+      {
+        "feature_id": 24081,
+        "code_count": 8,
+        "desc_count": 1,
+        "code_freq": 0.267,
+        "desc_freq": 0.067,
+        "tilt": 2.88
+      },
+      {
+        "feature_id": 48952,
+        "code_count": 8,
+        "desc_count": 1,
+        "code_freq": 0.267,
+        "desc_freq": 0.067,
+        "tilt": 2.88
+      },
+      {
+        "feature_id": 13397,
+        "code_count": 30,
+        "desc_count": 5,
+        "code_freq": 1.0,
+        "desc_freq": 0.333,
+        "tilt": 2.818
+      },
+      {
+        "feature_id": 35030,
+        "code_count": 7,
+        "desc_count": 1,
+        "code_freq": 0.233,
+        "desc_freq": 0.067,
+        "tilt": 2.541
+      },
+      {
+        "feature_id": 12867,
+        "code_count": 7,
+        "desc_count": 1,
+        "code_freq": 0.233,
+        "desc_freq": 0.067,
+        "tilt": 2.541
+      },
+      {
+        "feature_id": 54054,
+        "code_count": 7,
+        "desc_count": 1,
+        "code_freq": 0.233,
+        "desc_freq": 0.067,
+        "tilt": 2.541
+      },
+      {
+        "feature_id": 4999,
+        "code_count": 7,
+        "desc_count": 1,
+        "code_freq": 0.233,
+        "desc_freq": 0.067,
+        "tilt": 2.541
+      },
+      {
+        "feature_id": 64480,
+        "code_count": 7,
+        "desc_count": 1,
+        "code_freq": 0.233,
+        "desc_freq": 0.067,
+        "tilt": 2.541
+      },
+      {
+        "feature_id": 31658,
+        "code_count": 11,
+        "desc_count": 2,
+        "code_freq": 0.367,
+        "desc_freq": 0.133,
+        "tilt": 2.338
+      },
+      {
+        "feature_id": 49035,
+        "code_count": 20,
+        "desc_count": 4,
+        "code_freq": 0.667,
+        "desc_freq": 0.267,
+        "tilt": 2.315
+      },
+      {
+        "feature_id": 47255,
+        "code_count": 6,
+        "desc_count": 1,
+        "code_freq": 0.2,
+        "desc_freq": 0.067,
+        "tilt": 2.202
+      },
+      {
+        "feature_id": 4657,
+        "code_count": 6,
+        "desc_count": 1,
+        "code_freq": 0.2,
+        "desc_freq": 0.067,
+        "tilt": 2.202
+      },
+      {
+        "feature_id": 7422,
+        "code_count": 6,
+        "desc_count": 1,
+        "code_freq": 0.2,
+        "desc_freq": 0.067,
+        "tilt": 2.202
+      },
+      {
+        "feature_id": 5216,
+        "code_count": 10,
+        "desc_count": 2,
+        "code_freq": 0.333,
+        "desc_freq": 0.133,
+        "tilt": 2.134
+      },
+      {
+        "feature_id": 48719,
+        "code_count": 9,
+        "desc_count": 2,
+        "code_freq": 0.3,
+        "desc_freq": 0.133,
+        "tilt": 1.931
+      },
+      {
+        "feature_id": 36898,
+        "code_count": 5,
+        "desc_count": 1,
+        "code_freq": 0.167,
+        "desc_freq": 0.067,
+        "tilt": 1.863
+      },
+      {
+        "feature_id": 25296,
+        "code_count": 5,
+        "desc_count": 1,
+        "code_freq": 0.167,
+        "desc_freq": 0.067,
+        "tilt": 1.863
+      },
+      {
+        "feature_id": 44029,
+        "code_count": 5,
+        "desc_count": 1,
+        "code_freq": 0.167,
+        "desc_freq": 0.067,
+        "tilt": 1.863
+      },
+      {
+        "feature_id": 62497,
+        "code_count": 5,
+        "desc_count": 1,
+        "code_freq": 0.167,
+        "desc_freq": 0.067,
+        "tilt": 1.863
+      },
+      {
+        "feature_id": 11307,
+        "code_count": 5,
+        "desc_count": 1,
+        "code_freq": 0.167,
+        "desc_freq": 0.067,
+        "tilt": 1.863
+      },
+      {
+        "feature_id": 13365,
+        "code_count": 5,
+        "desc_count": 1,
+        "code_freq": 0.167,
+        "desc_freq": 0.067,
+        "tilt": 1.863
+      },
+      {
+        "feature_id": 50417,
+        "code_count": 5,
+        "desc_count": 1,
+        "code_freq": 0.167,
+        "desc_freq": 0.067,
+        "tilt": 1.863
+      },
+      {
+        "feature_id": 12740,
+        "code_count": 8,
+        "desc_count": 2,
+        "code_freq": 0.267,
+        "desc_freq": 0.133,
+        "tilt": 1.728
+      },
+      {
+        "feature_id": 17508,
+        "code_count": 8,
+        "desc_count": 2,
+        "code_freq": 0.267,
+        "desc_freq": 0.133,
+        "tilt": 1.728
+      },
+      {
+        "feature_id": 12958,
+        "code_count": 17,
+        "desc_count": 5,
+        "code_freq": 0.567,
+        "desc_freq": 0.333,
+        "tilt": 1.617
+      },
+      {
+        "feature_id": 55413,
+        "code_count": 4,
+        "desc_count": 1,
+        "code_freq": 0.133,
+        "desc_freq": 0.067,
+        "tilt": 1.525
+      },
+      {
+        "feature_id": 53417,
+        "code_count": 4,
+        "desc_count": 1,
+        "code_freq": 0.133,
+        "desc_freq": 0.067,
+        "tilt": 1.525
+      },
+      {
+        "feature_id": 33001,
+        "code_count": 4,
+        "desc_count": 1,
+        "code_freq": 0.133,
+        "desc_freq": 0.067,
+        "tilt": 1.525
+      },
+      {
+        "feature_id": 2607,
+        "code_count": 4,
+        "desc_count": 1,
+        "code_freq": 0.133,
+        "desc_freq": 0.067,
+        "tilt": 1.525
+      },
+      {
+        "feature_id": 19154,
+        "code_count": 13,
+        "desc_count": 4,
+        "code_freq": 0.433,
+        "desc_freq": 0.267,
+        "tilt": 1.525
+      },
+      {
+        "feature_id": 11104,
+        "code_count": 4,
+        "desc_count": 1,
+        "code_freq": 0.133,
+        "desc_freq": 0.067,
+        "tilt": 1.525
+      },
+      {
+        "feature_id": 977,
+        "code_count": 4,
+        "desc_count": 1,
+        "code_freq": 0.133,
+        "desc_freq": 0.067,
+        "tilt": 1.525
+      },
+      {
+        "feature_id": 15546,
+        "code_count": 4,
+        "desc_count": 1,
+        "code_freq": 0.133,
+        "desc_freq": 0.067,
+        "tilt": 1.525
+      },
+      {
+        "feature_id": 28048,
+        "code_count": 4,
+        "desc_count": 1,
+        "code_freq": 0.133,
+        "desc_freq": 0.067,
+        "tilt": 1.525
+      },
+      {
+        "feature_id": 56767,
+        "code_count": 4,
+        "desc_count": 1,
+        "code_freq": 0.133,
+        "desc_freq": 0.067,
+        "tilt": 1.525
+      },
+      {
+        "feature_id": 62926,
+        "code_count": 4,
+        "desc_count": 1,
+        "code_freq": 0.133,
+        "desc_freq": 0.067,
+        "tilt": 1.525
+      },
+      {
+        "feature_id": 36336,
+        "code_count": 4,
+        "desc_count": 1,
+        "code_freq": 0.133,
+        "desc_freq": 0.067,
+        "tilt": 1.525
+      },
+      {
+        "feature_id": 34386,
+        "code_count": 10,
+        "desc_count": 3,
+        "code_freq": 0.333,
+        "desc_freq": 0.2,
+        "tilt": 1.525
+      },
+      {
+        "feature_id": 50779,
+        "code_count": 4,
+        "desc_count": 1,
+        "code_freq": 0.133,
+        "desc_freq": 0.067,
+        "tilt": 1.525
+      },
+      {
+        "feature_id": 20132,
+        "code_count": 4,
+        "desc_count": 1,
+        "code_freq": 0.133,
+        "desc_freq": 0.067,
+        "tilt": 1.525
+      },
+      {
+        "feature_id": 10213,
+        "code_count": 4,
+        "desc_count": 1,
+        "code_freq": 0.133,
+        "desc_freq": 0.067,
+        "tilt": 1.525
+      },
+      {
+        "feature_id": 18408,
+        "code_count": 4,
+        "desc_count": 1,
+        "code_freq": 0.133,
+        "desc_freq": 0.067,
+        "tilt": 1.525
+      },
+      {
+        "feature_id": 44476,
+        "code_count": 26,
+        "desc_count": 9,
+        "code_freq": 0.867,
+        "desc_freq": 0.6,
+        "tilt": 1.418
+      },
+      {
+        "feature_id": 31599,
+        "code_count": 8,
+        "desc_count": 3,
+        "code_freq": 0.267,
+        "desc_freq": 0.2,
+        "tilt": 1.234
+      },
+      {
+        "feature_id": 2093,
+        "code_count": 3,
+        "desc_count": 1,
+        "code_freq": 0.1,
+        "desc_freq": 0.067,
+        "tilt": 1.186
+      },
+      {
+        "feature_id": 49250,
+        "code_count": 3,
+        "desc_count": 1,
+        "code_freq": 0.1,
+        "desc_freq": 0.067,
+        "tilt": 1.186
+      },
+      {
+        "feature_id": 10577,
+        "code_count": 3,
+        "desc_count": 1,
+        "code_freq": 0.1,
+        "desc_freq": 0.067,
+        "tilt": 1.186
+      },
+      {
+        "feature_id": 8554,
+        "code_count": 3,
+        "desc_count": 1,
+        "code_freq": 0.1,
+        "desc_freq": 0.067,
+        "tilt": 1.186
+      },
+      {
+        "feature_id": 62007,
+        "code_count": 3,
+        "desc_count": 1,
+        "code_freq": 0.1,
+        "desc_freq": 0.067,
+        "tilt": 1.186
+      },
+      {
+        "feature_id": 47693,
+        "code_count": 3,
+        "desc_count": 1,
+        "code_freq": 0.1,
+        "desc_freq": 0.067,
+        "tilt": 1.186
+      },
+      {
+        "feature_id": 640,
+        "code_count": 3,
+        "desc_count": 1,
+        "code_freq": 0.1,
+        "desc_freq": 0.067,
+        "tilt": 1.186
+      },
+      {
+        "feature_id": 10990,
+        "code_count": 3,
+        "desc_count": 1,
+        "code_freq": 0.1,
+        "desc_freq": 0.067,
+        "tilt": 1.186
+      },
+      {
+        "feature_id": 37732,
+        "code_count": 3,
+        "desc_count": 1,
+        "code_freq": 0.1,
+        "desc_freq": 0.067,
+        "tilt": 1.186
+      },
+      {
+        "feature_id": 64360,
+        "code_count": 3,
+        "desc_count": 1,
+        "code_freq": 0.1,
+        "desc_freq": 0.067,
+        "tilt": 1.186
+      },
+      {
+        "feature_id": 11232,
+        "code_count": 3,
+        "desc_count": 1,
+        "code_freq": 0.1,
+        "desc_freq": 0.067,
+        "tilt": 1.186
+      },
+      {
+        "feature_id": 54293,
+        "code_count": 3,
+        "desc_count": 1,
+        "code_freq": 0.1,
+        "desc_freq": 0.067,
+        "tilt": 1.186
+      },
+      {
+        "feature_id": 42020,
+        "code_count": 3,
+        "desc_count": 1,
+        "code_freq": 0.1,
+        "desc_freq": 0.067,
+        "tilt": 1.186
+      },
+      {
+        "feature_id": 58407,
+        "code_count": 3,
+        "desc_count": 1,
+        "code_freq": 0.1,
+        "desc_freq": 0.067,
+        "tilt": 1.186
+      },
+      {
+        "feature_id": 27768,
+        "code_count": 3,
+        "desc_count": 1,
+        "code_freq": 0.1,
+        "desc_freq": 0.067,
+        "tilt": 1.186
+      },
+      {
+        "feature_id": 17614,
+        "code_count": 3,
+        "desc_count": 1,
+        "code_freq": 0.1,
+        "desc_freq": 0.067,
+        "tilt": 1.186
+      },
+      {
+        "feature_id": 27891,
+        "code_count": 3,
+        "desc_count": 1,
+        "code_freq": 0.1,
+        "desc_freq": 0.067,
+        "tilt": 1.186
+      },
+      {
+        "feature_id": 5546,
+        "code_count": 3,
+        "desc_count": 1,
+        "code_freq": 0.1,
+        "desc_freq": 0.067,
+        "tilt": 1.186
+      },
+      {
+        "feature_id": 42620,
+        "code_count": 3,
+        "desc_count": 1,
+        "code_freq": 0.1,
+        "desc_freq": 0.067,
+        "tilt": 1.186
+      },
+      {
+        "feature_id": 61201,
+        "code_count": 3,
+        "desc_count": 1,
+        "code_freq": 0.1,
+        "desc_freq": 0.067,
+        "tilt": 1.186
+      },
+      {
+        "feature_id": 1821,
+        "code_count": 3,
+        "desc_count": 1,
+        "code_freq": 0.1,
+        "desc_freq": 0.067,
+        "tilt": 1.186
+      },
+      {
+        "feature_id": 2353,
+        "code_count": 5,
+        "desc_count": 2,
+        "code_freq": 0.167,
+        "desc_freq": 0.133,
+        "tilt": 1.118
+      },
+      {
+        "feature_id": 47854,
+        "code_count": 5,
+        "desc_count": 2,
+        "code_freq": 0.167,
+        "desc_freq": 0.133,
+        "tilt": 1.118
+      },
+      {
+        "feature_id": 1015,
+        "code_count": 5,
+        "desc_count": 2,
+        "code_freq": 0.167,
+        "desc_freq": 0.133,
+        "tilt": 1.118
+      },
+      {
+        "feature_id": 24049,
+        "code_count": 5,
+        "desc_count": 2,
+        "code_freq": 0.167,
+        "desc_freq": 0.133,
+        "tilt": 1.118
+      },
+      {
+        "feature_id": 7760,
+        "code_count": 5,
+        "desc_count": 2,
+        "code_freq": 0.167,
+        "desc_freq": 0.133,
+        "tilt": 1.118
+      },
+      {
+        "feature_id": 50831,
+        "code_count": 5,
+        "desc_count": 2,
+        "code_freq": 0.167,
+        "desc_freq": 0.133,
+        "tilt": 1.118
+      },
+      {
+        "feature_id": 55212,
+        "code_count": 5,
+        "desc_count": 2,
+        "code_freq": 0.167,
+        "desc_freq": 0.133,
+        "tilt": 1.118
+      },
+      {
+        "feature_id": 50467,
+        "code_count": 22,
+        "desc_count": 10,
+        "code_freq": 0.733,
+        "desc_freq": 0.667,
+        "tilt": 1.089
+      },
+      {
+        "feature_id": 36194,
+        "code_count": 7,
+        "desc_count": 3,
+        "code_freq": 0.233,
+        "desc_freq": 0.2,
+        "tilt": 1.089
+      },
+      {
+        "feature_id": 44663,
+        "code_count": 7,
+        "desc_count": 3,
+        "code_freq": 0.233,
+        "desc_freq": 0.2,
+        "tilt": 1.089
+      },
+      {
+        "feature_id": 6159,
+        "code_count": 13,
+        "desc_count": 6,
+        "code_freq": 0.433,
+        "desc_freq": 0.4,
+        "tilt": 1.055
+      },
+      {
+        "feature_id": 21348,
+        "code_count": 30,
+        "desc_count": 15,
+        "code_freq": 1.0,
+        "desc_freq": 1.0,
+        "tilt": 1.0
+      },
+      {
+        "feature_id": 24065,
+        "code_count": 29,
+        "desc_count": 15,
+        "code_freq": 0.967,
+        "desc_freq": 1.0,
+        "tilt": 0.967
+      },
+      {
+        "feature_id": 30746,
+        "code_count": 4,
+        "desc_count": 2,
+        "code_freq": 0.133,
+        "desc_freq": 0.133,
+        "tilt": 0.915
+      },
+      {
+        "feature_id": 45538,
+        "code_count": 4,
+        "desc_count": 2,
+        "code_freq": 0.133,
+        "desc_freq": 0.133,
+        "tilt": 0.915
+      },
+      {
+        "feature_id": 3312,
+        "code_count": 4,
+        "desc_count": 2,
+        "code_freq": 0.133,
+        "desc_freq": 0.133,
+        "tilt": 0.915
+      },
+      {
+        "feature_id": 24346,
+        "code_count": 4,
+        "desc_count": 2,
+        "code_freq": 0.133,
+        "desc_freq": 0.133,
+        "tilt": 0.915
+      },
+      {
+        "feature_id": 61235,
+        "code_count": 4,
+        "desc_count": 2,
+        "code_freq": 0.133,
+        "desc_freq": 0.133,
+        "tilt": 0.915
+      },
+      {
+        "feature_id": 57371,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 22570,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 2110,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 20578,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 18704,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 18853,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 53832,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 31329,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 8817,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 17037,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 53934,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 53977,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 15172,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 41904,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 9163,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 11252,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 23656,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 27756,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 5228,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 50293,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 13525,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 5363,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 44338,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 36165,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 38258,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 17781,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 48506,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 23996,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 15834,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 48636,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 7697,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 46701,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 34460,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 12012,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 20283,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 8040,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 61436,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 26535,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 22483,
+        "code_count": 2,
+        "desc_count": 1,
+        "code_freq": 0.067,
+        "desc_freq": 0.067,
+        "tilt": 0.847
+      },
+      {
+        "feature_id": 24156,
+        "code_count": 24,
+        "desc_count": 15,
+        "code_freq": 0.8,
+        "desc_freq": 1.0,
+        "tilt": 0.803
+      },
+      {
+        "feature_id": 59580,
+        "code_count": 3,
+        "desc_count": 2,
+        "code_freq": 0.1,
+        "desc_freq": 0.133,
+        "tilt": 0.711
+      },
+      {
+        "feature_id": 43563,
+        "code_count": 3,
+        "desc_count": 2,
+        "code_freq": 0.1,
+        "desc_freq": 0.133,
+        "tilt": 0.711
+      },
+      {
+        "feature_id": 35450,
+        "code_count": 3,
+        "desc_count": 2,
+        "code_freq": 0.1,
+        "desc_freq": 0.133,
+        "tilt": 0.711
+      },
+      {
+        "feature_id": 47807,
+        "code_count": 3,
+        "desc_count": 2,
+        "code_freq": 0.1,
+        "desc_freq": 0.133,
+        "tilt": 0.711
+      },
+      {
+        "feature_id": 50347,
+        "code_count": 3,
+        "desc_count": 2,
+        "code_freq": 0.1,
+        "desc_freq": 0.133,
+        "tilt": 0.711
+      },
+      {
+        "feature_id": 32767,
+        "code_count": 3,
+        "desc_count": 2,
+        "code_freq": 0.1,
+        "desc_freq": 0.133,
+        "tilt": 0.711
+      },
+      {
+        "feature_id": 63993,
+        "code_count": 4,
+        "desc_count": 3,
+        "code_freq": 0.133,
+        "desc_freq": 0.2,
+        "tilt": 0.653
+      },
+      {
+        "feature_id": 64167,
+        "code_count": 4,
+        "desc_count": 3,
+        "code_freq": 0.133,
+        "desc_freq": 0.2,
+        "tilt": 0.653
+      },
+      {
+        "feature_id": 31898,
+        "code_count": 4,
+        "desc_count": 3,
+        "code_freq": 0.133,
+        "desc_freq": 0.2,
+        "tilt": 0.653
+      },
+      {
+        "feature_id": 34000,
+        "code_count": 4,
+        "desc_count": 3,
+        "code_freq": 0.133,
+        "desc_freq": 0.2,
+        "tilt": 0.653
+      },
+      {
+        "feature_id": 51025,
+        "code_count": 4,
+        "desc_count": 3,
+        "code_freq": 0.133,
+        "desc_freq": 0.2,
+        "tilt": 0.653
+      },
+      {
+        "feature_id": 49589,
+        "code_count": 6,
+        "desc_count": 5,
+        "code_freq": 0.2,
+        "desc_freq": 0.333,
+        "tilt": 0.601
+      },
+      {
+        "feature_id": 45031,
+        "code_count": 6,
+        "desc_count": 5,
+        "code_freq": 0.2,
+        "desc_freq": 0.333,
+        "tilt": 0.601
+      },
+      {
+        "feature_id": 25819,
+        "code_count": 11,
+        "desc_count": 10,
+        "code_freq": 0.367,
+        "desc_freq": 0.667,
+        "tilt": 0.557
+      },
+      {
+        "feature_id": 14338,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 63491,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 47116,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 47126,
+        "code_count": 4,
+        "desc_count": 4,
+        "code_freq": 0.133,
+        "desc_freq": 0.267,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 55330,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 16453,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 32881,
+        "code_count": 2,
+        "desc_count": 2,
+        "code_freq": 0.067,
+        "desc_freq": 0.133,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 14480,
+        "code_count": 2,
+        "desc_count": 2,
+        "code_freq": 0.067,
+        "desc_freq": 0.133,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 53392,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 41184,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 30978,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 63757,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 35094,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 8474,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 45343,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 63796,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 49481,
+        "code_count": 2,
+        "desc_count": 2,
+        "code_freq": 0.067,
+        "desc_freq": 0.133,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 55643,
+        "code_count": 2,
+        "desc_count": 2,
+        "code_freq": 0.067,
+        "desc_freq": 0.133,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 22878,
+        "code_count": 2,
+        "desc_count": 2,
+        "code_freq": 0.067,
+        "desc_freq": 0.133,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 49527,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 55680,
+        "code_count": 2,
+        "desc_count": 2,
+        "code_freq": 0.067,
+        "desc_freq": 0.133,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 63878,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 18870,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 59860,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 477,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 16907,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 12819,
+        "code_count": 2,
+        "desc_count": 2,
+        "code_freq": 0.067,
+        "desc_freq": 0.133,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 2589,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 51763,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 47670,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 31290,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 21067,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 6733,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 37454,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 6753,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 41579,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 43659,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 2700,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 6798,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 29343,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 41642,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 58029,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 45774,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 45787,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 64231,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 15118,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      },
+      {
+        "feature_id": 29462,
+        "code_count": 1,
+        "desc_count": 1,
+        "code_freq": 0.033,
+        "desc_freq": 0.067,
+        "tilt": 0.508
+      }
+    ]
+  }
+}
