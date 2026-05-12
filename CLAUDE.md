@@ -56,6 +56,7 @@ surgenry/                — SAE interpretability experiments
 ├── steer_generation.py          — Step 3: intervene (negate/inject) to steer
 ├── sae_analysis.py              — Quick SAE feature viewer for a single prompt
 ├── sae_intervene.py             — Quick single-feature intervention tool
+├── scan_shared_with_tilt.py     — Scan A∩D, output per-feature code/desc frequency and tilt ratio
 └── verify_reasoning_overlap.py  — Reasoning overlap experiment (uses A-D, A∩D)
 ```
 
@@ -82,9 +83,15 @@ surgenry/                — SAE interpretability experiments
 
 - **Chat template**: All generation requests must apply `tokenizer.apply_chat_template()` with `add_generation_prompt=True` (already handled by server)
 - **SAE mechanism**: Uses `torch.topk(k=100)` to get sparse activations from 65536-dim space; interventions applied via `register_forward_hook` on decoder layers
-- **Intervention types**: `zero`, `scale`, `set`, `clamp_max`, `negate`
-- **Layer 31** (last hidden layer) is the most effective intervention target
+- **Intervention types**: `zero`, `scale`, `set`, `clamp_max`, `negate`, `add_direction`
+- **`add_direction`**: New action (2026-05-12). Encodes residual to confirm feature is in top-100, then directly adds/subtracts `W_dec[:, fid]` direction vector in residual space: `h' = reconstructed + α × W_dec[:, fid]`. Avoids decode loss, α is arbitrary. Only intervenes if feature is actually active.
+  ```python
+  {"layer": 20, "feature_id": 34612, "action": "add_direction", "value": -20.0}  # suppress
+  {"layer": 20, "feature_id": 34612, "action": "add_direction", "value": 30.0}   # reinforce
+  ```
+- **Layer selection is critical**: Do NOT default to Layer 31. Use Logits Lens to identify decision burst points. For code/reasoning tasks, Layer 20 (structure decision) is often more effective than Layer 31 (stylistic refinement).
 - **SAE weights are lazy-loaded** into `sae_cache` dict on first use
+- **W_dec shape is (4096, 65536)** — index as `W_dec[:, fid]`, NOT `W_dec[fid]`.
 
 ## Running New Experiments
 
@@ -150,6 +157,37 @@ python3 surgenry/steer_generation.py steer-negate-shared \
   -i ranked_shared.json -l 31 --top 10 --prompt "..." -m 100 -t 0.3
 ```
 
+## Code-Tilted A∩D Causal Experiment (2026-05-12)
+
+Key insight: **Layer 31 is too late for intervention.** Logits Lens shows structure decisions happen at L20 (e.g., "using" 18%→80%), not L31 (stylistic refinement).
+
+### Experiment Flow
+
+```bash
+# Phase 1: Scan A∩D with per-side frequency, rank by code-tilt
+python3 surgenry/scan_shared_with_tilt.py -l 20 --topk 200 --output shared_with_tilt.json
+
+# Phase 2: Intervene with add_direction at decision layer
+# α=-20 is the selective dose (code ok, most reasoning broken)
+python3 -c "
+from core import intervene
+# Build interventions from shared_with_tilt.json (tilt>=2.0 features)
+interventions = [{'layer': 20, 'feature_id': fid, 'action': 'add_direction', 'value': -20.0} ...]
+"
+```
+
+### Key Findings
+
+| Finding | Detail |
+|---------|--------|
+| **Layer specificity** | Only L20 works, not L26 or L31 |
+| **Specificity control** | Random features at α=-100 on L20 → no effect |
+| **Selective dose** | α=-20: code intact, reasoning broken |
+| **Complex code affected** | Quicksort crashes, Fibonacci/Palindrome survive |
+| **Reasoning affected** | Stack, Insertion Sort, Water Pouring all crash |
+| **Non-monotonic recovery** | α=-30 shows partial recovery on simple tasks (bypass paths?) |
+| **Report** | `特征分离与推理因果实验报告.md` |
+
 ## Surgenry Experiment Flow (France vs China)
 
 ```bash
@@ -174,6 +212,15 @@ python3 test_qwen3.py /home/shadowmydx/.cache/modelscope/hub/models/Qwen/Qwen3-8
 SAE_DIR=/home/shadowmydx/.cache/modelscope/hub/models/Qwen/SAE-Res-Qwen3-8B-Base-W64K-L0_100 \
   python3 test_qwen3.py /home/shadowmydx/.cache/modelscope/hub/models/Qwen/Qwen3-8B
 ```
+
+## Experiment Reports
+
+| File | Date | Content |
+|------|------|---------|
+| `实验报告_推理重叠验证.md` | 2026-05-11 | Original reasoning overlap (A-D negate, no effect) |
+| `推理重叠验证_实验结论.md` | 2026-05-11 | Summary conclusion of 05-11 experiments |
+| `特征分离与推理因果实验报告.md` | 2026-05-12 | Code-tilted A∩D causal experiment (breakthrough) |
+| `discuss/` | — | Research direction discussions and analysis notes |
 
 ## Known Issues
 
