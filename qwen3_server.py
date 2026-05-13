@@ -274,6 +274,15 @@ class SAERequest(BaseModel):
     """Number of top activating features to return per layer."""
     include_reconstruction: bool = False
     """Also return reconstructed residual and MSE loss."""
+    feature_ids: list[int] = []
+    """Specific features to trace across all token positions (used by /sae_trace)."""
+
+
+class SAETraceRequest(BaseModel):
+    prompt: str
+    layers: list[int]
+    feature_ids: list[int]
+    """Feature IDs to trace across ALL token positions."""
 
 
 class InterventionSpec(BaseModel):
@@ -493,6 +502,61 @@ def sae_inference(req: SAERequest):
             loss = (reconstructed - residual).pow(2).mean().item()
             entry["reconstruction"] = {"mse_loss": round(loss, 6), "reconstructed_norm": round(reconstructed.norm().item(), 4)}
         result[str(layer_idx)] = entry
+
+    return {"layers": result}
+
+
+@app.post("/sae_trace")
+def sae_trace(req: SAETraceRequest):
+    """
+    Trace specified feature activations across ALL token positions.
+    Returns per-token activation values for requested feature IDs.
+    Useful for understanding WHERE a feature fires in a prompt.
+    """
+    if not model_loaded:
+        raise HTTPException(503, "Model not loaded.")
+    if sae_dir is None:
+        raise HTTPException(400, "SAE dir not set. POST /sae_set_dir first.")
+
+    trace_fids = list(dict.fromkeys(req.feature_ids))
+    if not trace_fids:
+        raise HTTPException(400, "feature_ids is required")
+
+    inputs = tokenizer(req.prompt, return_tensors="pt").to(model.device)
+    with torch.no_grad():
+        outputs = model(**inputs, output_hidden_states=True, return_dict=True)
+
+    tokens = tokenizer.convert_ids_to_tokens(inputs.input_ids[0])
+    seq_len = len(tokens)
+    n_layers = model.config.num_hidden_layers
+
+    result = {}
+    for layer_idx in req.layers:
+        if layer_idx < 0 or layer_idx >= n_layers:
+            raise HTTPException(400, f"Layer {layer_idx} out of range [0, {n_layers-1}]")
+        sae_state = _load_sae(layer_idx)
+        residuals = outputs.hidden_states[layer_idx + 1][0]  # (seq_len, d_model)
+
+        W_enc = sae_state["W_enc"].to(device="cpu", dtype=torch.float32)
+        b_enc = sae_state["b_enc"].to(device="cpu", dtype=torch.float32)
+        res_cpu = residuals.to(device="cpu", dtype=torch.float32)
+
+        fids_tensor = torch.tensor(trace_fids, device="cpu")
+        W_enc_slice = W_enc[fids_tensor]  # (n_fids, d_model)
+        b_enc_slice = b_enc[fids_tensor]   # (n_fids,)
+
+        pre_acts = res_cpu @ W_enc_slice.T + b_enc_slice  # (seq_len, n_fids)
+        pre_acts = pre_acts.clamp(min=0.0)  # ReLU
+
+        feature_trace = {}
+        for j, fid in enumerate(trace_fids):
+            feature_trace[str(fid)] = [round(pre_acts[i, j].item(), 4) for i in range(seq_len)]
+
+        result[str(layer_idx)] = {
+            "tokens": tokens,
+            "feature_ids": trace_fids,
+            "activations": feature_trace,
+        }
 
     return {"layers": result}
 

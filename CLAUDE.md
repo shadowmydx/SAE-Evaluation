@@ -57,6 +57,7 @@ surgenry/                — SAE interpretability experiments
 ├── sae_analysis.py              — Quick SAE feature viewer for a single prompt
 ├── sae_intervene.py             — Quick single-feature intervention tool
 ├── scan_shared_with_tilt.py     — Scan A∩D, output per-feature code/desc frequency and tilt ratio
+├── trace_features.py            — Token-level feature activation tracing (uses /sae_trace)
 └── verify_reasoning_overlap.py  — Reasoning overlap experiment (uses A-D, A∩D)
 ```
 
@@ -76,6 +77,7 @@ surgenry/                — SAE interpretability experiments
 | `/logits_lens` | Project hidden states through LM head |
 | `/sae_set_dir` | Set SAE directory |
 | `/sae` | Run SAE to extract top activating features |
+| `/sae_trace` | Trace specified feature activations across ALL token positions |
 | `/sae_intervene` | Generate with SAE feature interventions |
 | `/health` (GET) | Check server status |
 
@@ -122,7 +124,7 @@ python3 surgenry/steer_generation.py inject \
 
 验证假说：排除概念共享干扰后，代码拆解特征是否仍在推理中激活。
 
-实验结论：**"代码拆解为推理提供 token 桥梁"假说被否决。** 具体证据见 `实验报告_推理重叠验证.md`。
+实验结论：**"代码拆解为推理提供 token 桥梁"假说被否决。** 具体证据见 `reports/2026-05-11_推理重叠验证.md`。
 
 ### 一键运行（相关性分析）
 
@@ -186,7 +188,7 @@ interventions = [{'layer': 20, 'feature_id': fid, 'action': 'add_direction', 'va
 | **Complex code affected** | Quicksort crashes, Fibonacci/Palindrome survive |
 | **Reasoning affected** | Stack, Insertion Sort, Water Pouring all crash |
 | **Non-monotonic recovery** | α=-30 shows partial recovery on simple tasks (bypass paths?) |
-| **Report** | `特征分离与推理因果实验报告.md` |
+| **Report** | `reports/2026-05-12_特征分离与推理因果实验.md` |
 
 ## Surgenry Experiment Flow (France vs China)
 
@@ -213,14 +215,38 @@ SAE_DIR=/home/shadowmydx/.cache/modelscope/hub/models/Qwen/SAE-Res-Qwen3-8B-Base
   python3 test_qwen3.py /home/shadowmydx/.cache/modelscope/hub/models/Qwen/Qwen3-8B
 ```
 
+## Experiment Report Guidelines
+
+每个实验报告（`reports/YYYY-MM-DD_*.md`）必须包含以下内容：
+
+1. **标题**: 日期 + 实验核心内容
+2. **运行日期 & 模型信息**
+3. **背景与动机**: 研究问题、前置实验结论
+4. **实验方法**:
+   - 候选特征集的构建方式（seed prompt、层、筛选条件）
+   - 控制组设计（随机特征、D-A、baseline 等）
+   - 剂量滴定过程
+5. **实验结果**: 表格形式呈现，标注 ✓/✗ 及崩溃模式
+6. **分析讨论**: 解释实验现象，提出假说
+7. **结论**: 对研究问题的判决
+8. **复现命令**: 可以直接执行的 shell 命令（含完整参数），确保其他研究者能复现全部结果
+
+### 编码实验脚本规范
+
+- 实验脚本放在 `surgenry/` 目录，以 `test_*.py` 命名
+- 脚本必须包含清晰的注释说明任务分组和判断标准
+- 自动分类输出为 PASS/CRASH/LOOP 并统计通过率
+
 ## Experiment Reports
 
 | File | Date | Content |
 |------|------|---------|
-| `实验报告_推理重叠验证.md` | 2026-05-11 | Original reasoning overlap (A-D negate, no effect) |
-| `推理重叠验证_实验结论.md` | 2026-05-11 | Summary conclusion of 05-11 experiments |
-| `特征分离与推理因果实验报告.md` | 2026-05-12 | Code-tilted A∩D causal experiment (breakthrough) |
-| `discuss/` | — | Research direction discussions and analysis notes |
+| `reports/2026-05-11_推理重叠验证.md` | 2026-05-11 | Original reasoning overlap (A-D negate, no effect) |
+| `reports/2026-05-11_推理重叠验证结论.md` | 2026-05-11 | Summary conclusion of 05-11 experiments |
+| `reports/2026-05-12_特征分离与推理因果实验.md` | 2026-05-12 | Code-tilted A∩D causal experiment (breakthrough) |
+| `reports/2026-05-13_AD重检验.md` | 2026-05-13 | A-D re-evaluation at L20 + add_direction; Pure reasoning extension |
+| `reports/2026-05-14_特征激活模式分析.md` | 2026-05-14 | Code-tilted A∩D per-token activation patterns (/sae_trace) |
+| `reports/discuss/` | — | Research direction discussions and analysis notes |
 
 ## Known Issues
 
