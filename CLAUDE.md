@@ -58,6 +58,7 @@ surgenry/                — SAE interpretability experiments
 ├── sae_intervene.py             — Quick single-feature intervention tool
 ├── scan_shared_with_tilt.py     — Scan A∩D, output per-feature code/desc frequency and tilt ratio
 ├── trace_features.py            — Token-level feature activation tracing (uses /sae_trace)
+├── eval_benchmark.py            — GSM8K + HumanEval benchmark eval with degradation detection
 └── verify_reasoning_overlap.py  — Reasoning overlap experiment (uses A-D, A∩D)
 ```
 
@@ -246,7 +247,41 @@ SAE_DIR=/home/shadowmydx/.cache/modelscope/hub/models/Qwen/SAE-Res-Qwen3-8B-Base
 | `reports/2026-05-12_特征分离与推理因果实验.md` | 2026-05-12 | Code-tilted A∩D causal experiment (breakthrough) |
 | `reports/2026-05-13_AD重检验.md` | 2026-05-13 | A-D re-evaluation at L20 + add_direction; Pure reasoning extension |
 | `reports/2026-05-14_特征激活模式分析.md` | 2026-05-14 | Code-tilted A∩D per-token activation patterns (/sae_trace) |
+| `reports/2026-05-15_正向干预与剂量对称性.md` | 2026-05-15 | Positive intervention α>0, dose symmetry (simple vs complex tasks) |
+| `reports/discuss/2026-05-15_标准Benchmark验证策略.md` | 2026-05-15 | GSM8K + HumanEval benchmark verification strategy |
 | `reports/discuss/` | — | Research direction discussions and analysis notes |
+
+## Benchmark Evaluation (2026-05-15)
+
+Script: `surgenry/eval_benchmark.py` — runs GSM8K (1319 test), HumanEval (164 problems), and BBH (27 tasks, one-shot) with/without intervention.
+
+**Goal**: NOT correctness checking. Detect **degradation** (empty output, stuttering, bigram/trigram repetition, low diversity, looping). Uses `detect_degradation()` with multi-metric thresholds.
+
+**Default intervention**: L20 + add_direction α=-20, 23 code-tilted A∩D features.
+
+```bash
+# Specific benchmarks
+python3 surgenry/eval_benchmark.py --gsm8k --both-modes --max-samples 20
+python3 surgenry/eval_benchmark.py --humaneval --intervene
+python3 surgenry/eval_benchmark.py --bbh --intervene                      # BBH (10/task default)
+python3 surgenry/eval_benchmark.py --bbh --intervene --bbh-per-task 25    # BBH more samples
+
+# Default: all 3 benchmarks, both modes
+python3 surgenry/eval_benchmark.py --max-samples 50
+```
+
+### Time Estimates (measured)
+
+| Config | Per sample | Full run (all 3) |
+|--------|:---------:|:----------------:|
+| GSM8K baseline | ~32s | ~11.8h |
+| GSM8K intervene | ~38s | ~14.1h |
+| HumanEval baseline | ~34s | ~1.6h |
+| HumanEval intervene | ~25s | ~1.1h |
+| BBH (10/task = 270) | ~30s (est.) | ~2.3h |
+| BBH (all = 6225) | ~30s (est.) | ~52h |
+
+Strategy doc: `reports/discuss/2026-05-15_标准Benchmark验证策略.md`
 
 ## Known Issues
 
