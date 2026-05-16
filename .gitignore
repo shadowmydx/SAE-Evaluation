@@ -46,3 +46,5 @@ ranked_features.json
 
 # Test artifacts
 __pycache__
+# Raw experiment outputs (large, not needed in repo)
+surgenry/data/evaluation/

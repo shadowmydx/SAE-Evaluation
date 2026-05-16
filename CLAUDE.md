@@ -38,18 +38,22 @@ surgenry/                — SAE interpretability experiments
 │   ├── models.py        — Typed dataclasses (ExperimentConfig, RankedFeatures, etc.)
 │   ├── client.py        — Server interaction layer (sae_scan, generate, intervene)
 │   └── workflows.py     — Business logic (discover, rank, overlap, intervention assembly)
-├── data/prompts/        — External prompt lists (JSON arrays, gitignored)
-│   ├── france.json      — 50 France-related prompts
-│   ├── china.json       — 50 China-related prompts
-│   ├── code.json                 — 30 code generation prompts (A)
-│   ├── knowledge.json            — 30 knowledge recall prompts (B)
-│   ├── descriptions.json         — 15 concept descriptions (D, control set)
-│   ├── reasoning_code.json       — 15 code-related reasoning prompts (C, easy)
-│   ├── reasoning_pure.json       — 15 pure reasoning prompts (C', easy)
-│   ├── hard_reasoning_code.json  — 46 random-param code-related reasoning (hard)
-│   ├── hard_reasoning_pure.json  — 24 random-param pure reasoning (hard)
-│   ├── procedural.json           — 11 non-code procedural tasks (E, baking/assembly/etc.)
-│   └── generate_hard_prompts.py  — Generator for hard reasoning prompts
+├── data/
+│   ├── prompts/            — External prompt lists (JSON arrays, gitignored)
+│   │   ├── france.json      — 50 France-related prompts
+│   │   ├── china.json       — 50 China-related prompts
+│   │   ├── code.json                 — 30 code generation prompts (A)
+│   │   ├── knowledge.json            — 30 knowledge recall prompts (B)
+│   │   ├── descriptions.json         — 15 concept descriptions (D, control set)
+│   │   ├── reasoning_code.json       — 15 code-related reasoning prompts (C, easy)
+│   │   ├── reasoning_pure.json       — 15 pure reasoning prompts (C', easy)
+│   │   ├── hard_reasoning_code.json  — 46 random-param code-related reasoning (hard)
+│   │   ├── hard_reasoning_pure.json  — 24 random-param pure reasoning (hard)
+│   │   ├── procedural.json           — 11 non-code procedural tasks (E, baking/assembly/etc.)
+│   │   ├── hotpotqa.json             — 30 multi-hop QA questions (HotpotQA-style)
+│   │   └── generate_hard_prompts.py  — Generator for hard reasoning prompts
+│   └── evaluation/         — Raw experiment outputs (originals, by date)
+│       └── YYYY-MM-DD/     — Per-day subdirectories with raw console output + JSON data
 ├── discover_features.py         — Step 1: find features specific to prompt A vs B
 ├── rank_features.py             — Step 2: rank candidate features by frequency
 ├── rank_shared.py               — Rank A∩D (concept-shared) features by cross-group frequency
@@ -58,8 +62,13 @@ surgenry/                — SAE interpretability experiments
 ├── sae_intervene.py             — Quick single-feature intervention tool
 ├── scan_shared_with_tilt.py     — Scan A∩D, output per-feature code/desc frequency and tilt ratio
 ├── trace_features.py            — Token-level feature activation tracing (uses /sae_trace)
+├── dose_titration.py            — Dose titration (α=-1 to -20 or α=+1 to +20, step=1)
 ├── eval_benchmark.py            — GSM8K + HumanEval benchmark eval with degradation detection
-└── verify_reasoning_overlap.py  — Reasoning overlap experiment (uses A-D, A∩D)
+├── verify_reasoning_overlap.py  — Reasoning overlap experiment (uses A-D, A∩D)
+├── layer_ablation.py            — Layer ablation: test each layer's own code-tilted features
+├── clean_ablation.py            — Clean ablation: A-only∪D-only vs code-tilted A∩D (full scan)
+├── activated_ablation.py        — Ablation from top-200 A∪D pool (early version)
+└── test_pure_reasoning.py       — Pure reasoning verification (39 prompts, non-code)
 ```
 
 ## Key Paths
@@ -82,130 +91,100 @@ surgenry/                — SAE interpretability experiments
 | `/sae_intervene` | Generate with SAE feature interventions |
 | `/health` (GET) | Check server status |
 
-## Key Technical Details
+## Key Technical Details — Methodological Lessons (from 6 days of experiments)
 
-- **Chat template**: All generation requests must apply `tokenizer.apply_chat_template()` with `add_generation_prompt=True` (already handled by server)
-- **SAE mechanism**: Uses `torch.topk(k=100)` to get sparse activations from 65536-dim space; interventions applied via `register_forward_hook` on decoder layers
-- **Intervention types**: `zero`, `scale`, `set`, `clamp_max`, `negate`, `add_direction`
-- **`add_direction`**: New action (2026-05-12). Encodes residual to confirm feature is in top-100, then directly adds/subtracts `W_dec[:, fid]` direction vector in residual space: `h' = reconstructed + α × W_dec[:, fid]`. Avoids decode loss, α is arbitrary. Only intervenes if feature is actually active.
+### Intervention methods (ranked by power)
+- **`add_direction` — PREFERRED**: Directly adds/subtracts `W_dec[:, fid]` in residual space. No reconstruction loss, α is arbitrary. Only intervenes if feature is active.
   ```python
   {"layer": 20, "feature_id": 34612, "action": "add_direction", "value": -20.0}  # suppress
   {"layer": 20, "feature_id": 34612, "action": "add_direction", "value": 30.0}   # reinforce
   ```
-- **Layer selection is critical**: Do NOT default to Layer 31. Use Logits Lens to identify decision burst points. For code/reasoning tasks, Layer 20 (structure decision) is often more effective than Layer 31 (stylistic refinement).
+- **`negate` — WEAK, DEPRECATED**: Requires full SAE encode-decode cycle, reconstruction loss, signal limited by original activation magnitude. L31 + negate produced false negatives (05-11).
+
+### Critical methodological findings
+
+1. **Layer selection must use Logits Lens**: L31 (last layer) has all decisions complete. L20 (structure decision burst point) is correct for code/reasoning tasks.
+2. **Tilt ratio > set difference**: `code_freq/desc_freq` (frequency ratio) identifies causally important features. Boolean set difference (A-D) finds correlation, not causation.
+3. **Ablation controls must sample from activated space**: Sampling from all 65536 FIDs (mostly dead neurons) is too loose. Use **A-only∪D-only** (full scan of both prompt groups, exclude ALL A∩D) for rigorous specificity testing.
+4. **Dose step=1 required**: Coarse sampling (±20, ±50) misses non-monotonicity entirely.
+5. **α=0 baseline ≠ no-intervention baseline**: SAE hook changes computation even with zero vector (reproduced twice).
+6. **Effect strength ≠ specificity**: L15 is stronger but non-specific (random features crash too). Distinguish by **crash pattern** (selective vs uniform).
 - **SAE weights are lazy-loaded** into `sae_cache` dict on first use
 - **W_dec shape is (4096, 65536)** — index as `W_dec[:, fid]`, NOT `W_dec[fid]`.
 
-## Running New Experiments
+## Core Experimental Pipeline (最终验证版)
 
-To run a custom experiment (not France vs China), provide prompt data files and use CLI args:
+### Purpose
+Verify causal relationship between code-tilted A∩D features and reasoning. The pipeline produces a reliable feature set (23 features, L20, tilt≥2.0) with the following property: **suppressing them selectively breaks multi-step reasoning but spares short-chain inference**.
 
-```bash
-# Step 1: Discover differential features
-python3 surgenry/discover_features.py \
-  --prompt-a "prompt for group A" --prompt-b "prompt for group B" \
-  -l 24,28,31 --output discovered_myexp.json
-
-# Step 2: Rank by frequency
-python3 surgenry/rank_features.py \
-  --input discovered_myexp.json \
-  --name my_experiment --group-a "label_a" --group-b "label_b" \
-  --prompts-a surgenry/data/prompts/group_a.json \
-  --prompts-b surgenry/data/prompts/group_b.json \
-  --topk 10 --output ranked_myexp.json
-
-# Step 3: Steer interventions
-python3 surgenry/steer_generation.py steer-negate \
-  -i ranked_myexp.json -l 31 --side a --top 3 --prompt "..."
-python3 surgenry/steer_generation.py inject \
-  -i ranked_myexp.json -l 31 --side b --top 3 --prompt "..."
-```
-
-## Reasoning Overlap Experiment (Code vs Knowledge) — 修正版
-
-验证假说：排除概念共享干扰后，代码拆解特征是否仍在推理中激活。
-
-实验结论：**"代码拆解为推理提供 token 桥梁"假说被否决。** 具体证据见 `reports/2026-05-11_推理重叠验证.md`。
-
-### 一键运行（相关性分析）
+### Standard Verification Flow
 
 ```bash
-python3 surgenry/verify_reasoning_overlap.py
-python3 surgenry/verify_reasoning_overlap.py --layers 15,24,31 -n 30 -o overlap_report.json
-```
-
-### 因果干预验证
-
-```bash
-# A-D: 代码独有特征 → 预期: 无影响（假设被否决）
-python3 surgenry/discover_features.py \
-  --prompt-a "Write a function to compute the nth Fibonacci number" \
-  --prompt-b "The Fibonacci sequence is a series where each number is the sum of the two preceding ones" \
-  -l 31 --output discovered_code_vs_desc.json
-
-python3 surgenry/rank_features.py \
-  --input discovered_code_vs_desc.json \
-  --name code_vs_desc --group-a "code-specific" --group-b "description-specific" \
-  --prompts-a surgenry/data/prompts/code.json \
-  --prompts-b surgenry/data/prompts/descriptions.json \
-  --num-prompts 30 --topk 10 --output ranked_code_vs_desc.json
-
-python3 surgenry/steer_generation.py steer-negate \
-  -i ranked_code_vs_desc.json -l 31 --side a --top 87 \
-  --prompt "..." -m 100 -t 0.3
-
-# A∩D: 通用语言特征 → 预期: 全面崩溃（控制组）
-python3 surgenry/rank_shared.py -l 31 --topk 10 --output ranked_shared.json
-python3 surgenry/steer_generation.py steer-negate-shared \
-  -i ranked_shared.json -l 31 --top 10 --prompt "..." -m 100 -t 0.3
-```
-
-## Code-Tilted A∩D Causal Experiment (2026-05-12)
-
-Key insight: **Layer 31 is too late for intervention.** Logits Lens shows structure decisions happen at L20 (e.g., "using" 18%→80%), not L31 (stylistic refinement).
-
-### Experiment Flow
-
-```bash
-# Phase 1: Scan A∩D with per-side frequency, rank by code-tilt
+# Step 1: Scan A∩D with per-side frequency, rank by tilt
+# This replaces the old set-difference approach (A-D) which produced false negatives
 python3 surgenry/scan_shared_with_tilt.py -l 20 --topk 200 --output shared_with_tilt.json
 
-# Phase 2: Intervene with add_direction at decision layer
-# α=-20 is the selective dose (code ok, most reasoning broken)
+# Step 2: Intervene with add_direction at the correct layer
+# α=-20 is the verified selective dose
 python3 -c "
-from core import intervene
-# Build interventions from shared_with_tilt.json (tilt>=2.0 features)
-interventions = [{'layer': 20, 'feature_id': fid, 'action': 'add_direction', 'value': -20.0} ...]
+import json
+from surgenry.core.client import intervene
+with open('shared_with_tilt.json') as f:
+    data = json.load(f)
+# 23 code-tilted A∩D features (tilt>=2.0)
+fids = [f['feature_id'] for f in data['20']['features'] if f['tilt'] >= 2.0]
+iv = [{'layer':20,'feature_id':fid,'action':'add_direction','value':-20.0} for fid in fids]
+result = intervene('Simulate a stack. Push 1, Push 2, Pop...', iv, 300, 0.3)
+print(result)
 "
+
+# Dose titration (negative): α=-1 to -20, step=1
+python3 surgenry/dose_titration.py
+
+# Dose titration (positive): α=+1 to +20, step=1
+python3 surgenry/dose_titration.py --positive
 ```
+
+### Essential Controls (required for publication)
+
+```bash
+# 1. Layer ablation — test with EACH LAYER's OWN features
+python3 surgenry/scan_shared_with_tilt.py -l 15,20,24,26,31 --topk 200 --output layer_ablation_features.json
+python3 surgenry/layer_ablation.py
+
+# 2. Clean ablation — A-only∪D-only vs code-tilted A∩D (full scan, exclude ALL A∩D)
+# This distinguishes "layer-specific" from "feature-class-specific"
+python3 surgenry/clean_ablation.py
+
+# 3. Dose titration (required because coarse ±20 misses non-monotonicity)
+python3 surgenry/dose_titration.py
+python3 surgenry/dose_titration.py --positive
+```
+
+### Core Finding
+
+L20 code-tilted A∩D features (23 features, tilt ≥ 2.0) encode a **"structured output orchestration"** signal. Suppressing them selectively breaks multi-step reasoning while preserving short-chain inference (Algebra). This is verified through:
+
+1. **Dose titration (bidirectional)**: α=-1 to -20 (negative) + α=+1 to +20 (positive), step=1
+2. **Layer ablation (L15/L20/L24/L26/L31)**: each layer with its own features
+3. **Clean ablation (L20)**: code-tilted A∩D vs random A-only∪D-only → **distinguishable** (code-tilted is task-selective, random is uniform mild interference)
+4. **Clean ablation (L15)**: code-tilted A∩D vs random A-only∪D-only → **indistinguishable** (both crash) → L15 = generic language foundation
+5. **Random feature control (L20, α=-100)**: no effect from add_direction itself
+6. **Pure reasoning extension (39 non-code prompts)**: 60-67% crash → features are NOT code-specific
 
 ### Key Findings
 
 | Finding | Detail |
 |---------|--------|
-| **Layer specificity** | Only L20 works, not L26 or L31 |
-| **Specificity control** | Random features at α=-100 on L20 → no effect |
+| **Layer specificity** | Only L20 works selectively. L15 also crashes but non-specifically (random features crash too). L24+ minimal effect. |
+| **Specificity control** | L20 random A-only∪D-only (23 features, α=-20) → only mild uniform UNCLOSED, NOT selective crash |
 | **Selective dose** | α=-20: code intact, reasoning broken |
-| **Complex code affected** | Quicksort crashes, Fibonacci/Palindrome survive |
-| **Reasoning affected** | Stack, Insertion Sort, Water Pouring all crash |
-| **Non-monotonic recovery** | α=-30 shows partial recovery on simple tasks (bypass paths?) |
-| **Report** | `reports/2026-05-12_特征分离与推理因果实验.md` |
-
-## Surgenry Experiment Flow (France vs China)
-
-```bash
-# Step 1: Discover differential features
-python3 surgenry/discover_features.py
-
-# Step 2: Rank by cross-prompt frequency (50 prompts each side, ~300 SAE calls)
-python3 surgenry/rank_features.py
-
-# Step 3: Steer interventions
-python3 surgenry/steer_generation.py baseline --prompt "The capital of France is"
-python3 surgenry/steer_generation.py steer-negate --prompt "..." -i ranked_features.json -l 31 --side a --top 3
-python3 surgenry/steer_generation.py inject --prompt "..." -i ranked_features.json -l 31 --side b --top 3
-python3 surgenry/steer_generation.py compare --prompt "..." -i ranked_features.json
-```
+| **Non-monotonicity (bidirectional)** | Both negative and positive show oscillation (crash→recover→crash at adjacent α) |
+| **Algebra immune across 40 doses** | (α=-1 to -20 + α=+1 to +20) — shortest-chain deterministic reasoning |
+| **Task demand spectrum** | Negative sensitivity: Water > Clock > Capital > Fibonacci > Algebra (immune). Positive sensitivity: Clock > Capital > Fibonacci > Algebra > Water (most robust) — **complete reversal** |
+| **Crash level asymmetry** | Negative → word-level loops ("capital of France is capital of France"). Positive → character-level stutter ("fffff...", "\| \| \| \|") |
+| **α=0 ≠ baseline** | Repeatedly reproduced. SAE hook itself changes computation even with zero vector. |
+| **Report** | `reports/2026-05-16_综合现象解释与理论框架.md` |
 
 ## Running Tests
 
@@ -238,18 +217,38 @@ SAE_DIR=/home/shadowmydx/.cache/modelscope/hub/models/Qwen/SAE-Res-Qwen3-8B-Base
 - 脚本必须包含清晰的注释说明任务分组和判断标准
 - 自动分类输出为 PASS/CRASH/LOOP 并统计通过率
 
+## Data Retention
+
+- **Experiment outputs** (raw console output) → `surgenry/data/evaluation/YYYY-MM-DD/`
+- **Prompt files** → `surgenry/data/prompts/`
+- **Feature scan data** (JSON) → project root or `surgenry/data/evaluation/`
+- **Reports** → `reports/YYYY-MM-DD_*.md`
+
+When running new experiments, save raw console output to the evaluation directory:
+```bash
+python3 surgenry/experiment_script.py 2>&1 | tee surgenry/data/evaluation/$(date +%F)/experiment_name_output.txt
+# Or copy later:
+cp /path/to/background/output surgenry/data/evaluation/2026-05-16/experiment_name_output.txt
+```
+
 ## Experiment Reports
 
 | File | Date | Content |
 |------|------|---------|
-| `reports/2026-05-11_推理重叠验证.md` | 2026-05-11 | Original reasoning overlap (A-D negate, no effect) |
+| `reports/2026-05-11_推理重叠验证.md` | 2026-05-11 | Original reasoning overlap (A-D negate, no effect — method flawed) |
 | `reports/2026-05-11_推理重叠验证结论.md` | 2026-05-11 | Summary conclusion of 05-11 experiments |
-| `reports/2026-05-12_特征分离与推理因果实验.md` | 2026-05-12 | Code-tilted A∩D causal experiment (breakthrough) |
+| `reports/2026-05-12_特征分离与推理因果实验.md` | 2026-05-12 | Code-tilted A∩D breakthrough (L20, add_direction, α=-20) |
 | `reports/2026-05-13_AD重检验.md` | 2026-05-13 | A-D re-evaluation at L20 + add_direction; Pure reasoning extension |
 | `reports/2026-05-14_特征激活模式分析.md` | 2026-05-14 | Code-tilted A∩D per-token activation patterns (/sae_trace) |
-| `reports/2026-05-15_正向干预与剂量对称性.md` | 2026-05-15 | Positive intervention α>0, dose symmetry (simple vs complex tasks) |
-| `reports/discuss/2026-05-15_标准Benchmark验证策略.md` | 2026-05-15 | GSM8K + HumanEval benchmark verification strategy |
-| `reports/discuss/` | — | Research direction discussions and analysis notes |
+| `reports/2026-05-15_正向干预与剂量对称性.md` | 2026-05-15 | Positive intervention α=+20/+50, dose symmetry |
+| `reports/2026-05-16_负向干预精确剂量滴定.md` | 2026-05-16 | Negative dose titration (α=-1 to -20, step=1) |
+| `reports/2026-05-16_正向干预精确剂量滴定.md` | 2026-05-16 | Positive dose titration (α=+1 to +20, step=1) |
+| `reports/2026-05-16_层消融实验.md` | 2026-05-16 | Layer ablation L15-L31 + clean ablation (A-only∪D-only control) |
+| `reports/2026-05-16_综合现象解释与理论框架.md` | 2026-05-16 | **Comprehensive synthesis: all phenomena + unified framework** |
+| `reports/2026-05-16_HotpotQA多跳推理验证.md` | 2026-05-16 | Multi-hop QA (30 questions, 97%→7% accuracy) + activation comparison |
+| `reports/discuss/2026-05-14_共享子空间框架.md` | 2026-05-14 | Shared subspace theoretical framework |
+| `reports/discuss/2026-05-15_标准Benchmark验证策略.md` | 2026-05-15 | GSM8K + HumanEval benchmark strategy |
+| `reports/discuss/2026-05-16_正负干预对比分析.md` | 2026-05-16 | Positive vs negative intervention comparison |
 
 ## Benchmark Evaluation (2026-05-15)
 
@@ -288,3 +287,4 @@ Strategy doc: `reports/discuss/2026-05-15_标准Benchmark验证策略.md`
 - Server must be restarted if `qwen3_server.py` is modified (changes don't hot-reload)
 - `/sae_intervene` requests use `torch.no_grad()` — the SAE encoder/decoder is not trained during intervention
 - rank_features.py outputs JSON to CWD (project root), not the surgenry/ directory
+- Raw experiment outputs are stored in `surgenry/data/evaluation/YYYY-MM-DD/` (gitignored). Copy important outputs there before the temp dirs are cleaned up.
